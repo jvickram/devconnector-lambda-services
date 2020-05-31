@@ -1,0 +1,121 @@
+# serverless.yml
+
+service: devconnector-lambda
+# service: my-express-application
+# plugins:
+#   - serverless-offline
+  
+provider:
+  name: aws
+  runtime: nodejs12.x
+  stage: ${opt:stage, 'dev'}
+  # stage: ${opt:stage, ${file(../environmentfile.yml):env}}
+  # #stage: ${file(../environmentfile.yml):env}
+  #stage: ${self:custom:env}
+  region: ap-south-1
+  #profile: Dev
+  #stack: EmailApiAwsLambdaApiGetway-dev
+  #  stack: my-express-application
+
+functions:
+  getUserForDev:
+    handler: handler.getUserForDev
+    environment:
+     name: ${self:provider.stage}
+    role: centralemailapirole
+    events:
+      - http:
+         path: getuser/{uid}
+         method: get
+        #  private: true 
+      # - sqs:
+      #    arn: 
+      #      "Fn::GetAtt": [CentralEmailStandardQueue , Arn]
+      #    batchSize: 1
+resources: 
+  Resources:
+    centralemailapirole:
+      Type: AWS::IAM::Role
+      Properties:
+        RoleName: centralemailapirole
+        AssumeRolePolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service:
+                  - lambda.amazonaws.com
+              Action: sts:AssumeRole
+        Policies:
+          - PolicyName: centralemailapirole
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - dynamodb:*
+                    - cloudwatch:*
+                    - logs:*
+                    - secretsmanager:*
+                    - s3:*
+                    - sqs:*
+                  Resource: "*"           
+                    
+    # centralemail:
+    #     Type: AWS::S3::Bucket
+    #     Properties:            
+    #         BucketName: centralemail-${self:provider.stage}
+    #         CorsConfiguration:
+    #           CorsRules:
+    #             -
+    #               AllowedOrigins:
+    #                 - '*'
+    #               AllowedHeaders:
+    #                 - '*'
+    #               AllowedMethods:
+    #               - GET
+    #               - PUT
+    #               - POST
+    #               - DELETE
+    #               - HEAD
+                    
+    # centralemailattachment:
+    #     Type: AWS::S3::Bucket
+    #     Properties:
+    #         # BucketName: centralemailattachmentdev
+    #         BucketName: centralemailattachment-${self:provider.stage}
+    #         CorsConfiguration:
+    #           CorsRules:
+    #             -
+    #               AllowedOrigins:
+    #                   - '*'
+    #               AllowedHeaders:
+    #                   - '*'
+    #               AllowedMethods:
+    #                 - GET
+    #                 - PUT
+    #                 - POST
+    #                 - DELETE
+    #                 - HEAD
+    
+    # CentralEmailStandardQueue:
+    #     Type: AWS::SQS::Queue
+    #     Properties : 
+    #         # DelaySeconds : 0
+    #         # FifoQueue : false
+    #         # MaximumMessageSize : 256
+    #         # MessageRetentionPeriod : 4
+    #         QueueName : CentralEmailStandardQueue
+    #         # ReceiveMessageWaitTimeSeconds : 0
+    #         # VisibilityTimeout : 30
+
+    # CentralEmailQueueTriger:
+    #     Type: AWS::Lambda::EventSourceMapping
+    #     Properties:
+    #       BatchSize : 1
+    #       EventSourceArn: 
+    #         Fn::GetAtt: 
+    #           - "CentralEmailStandardQueue"
+    #           - "Arn"
+    #       FunctionName: 
+    #         -"CentralEmailDispatcher" 

@@ -1,0 +1,28 @@
+{
+  "name": "devconnector-lambda",
+  "version": "1.0.0",
+  "description": "",
+  "main": "handler.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.686.0",
+    "dynamodb": "^1.2.1",
+    "uuid": "^8.1.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jvickram/devconnector-lambda-services.git"
+  },
+  "author": "Bickey Jaisawal",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jvickram/devconnector-lambda-services/issues"
+  },
+  "homepage": "https://github.com/jvickram/devconnector-lambda-services#readme"
+}
